@@ -6,28 +6,27 @@ SET(
 		chain_plugin
 )
 
-IF ( NOT MACOSX )
-	SET(
-		_DIR_LIST 
-			${_DIR_LIST}
-			caps_plugin
-			echopro_plugin
-			ewexport_plugin
-			ewexport_pasv_plugin
-			fs_plugin
-			minilogger_plugin
-			mseedscan_plugin
-			naqsplugin
-			q330plugin
-			reftek_plugin
-			scream_plugin
-			scream2_plugin
-			serial_plugin
-			sockplugin
-			wave24_plugin
-			win_plugin
-	) 
-ENDIF ( NOT MACOSX )
+SET(
+	_DIR_LIST 
+		${_DIR_LIST}
+		caps_plugin
+		echopro_plugin
+		ewexport_plugin
+		ewexport_pasv_plugin
+		fs_plugin
+		minilogger_plugin
+		mseedscan_plugin
+		naqsplugin
+		q330plugin
+		reftek_plugin
+		scream_plugin
+		scream2_plugin
+		serial_plugin
+		sockplugin
+		wave24_plugin
+		win_plugin
+)
+
 
 SET(SEEDLINK_PLUGIN_OUTPUT_DIR ${SC3_PACKAGE_SHARE_DIR}/plugins/seedlink)
 
