@@ -238,3 +238,6 @@
 /src/trunk/libs/3rd-party/spread/stdutil/src/stdutil.ltdo
 /src/trunk/libs/3rd-party/spread/stdutil/src/stdutil.o
 /src/trunk/libs/3rd-party/spread/stdutil/src/stdutil.tdo
+
+# Ignore Mac DS_Store files (globally)
+.DS_Store
