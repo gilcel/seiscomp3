@@ -33,12 +33,12 @@ TARGET_LINK_LIBRARIES(
 	arclink
 		${LIBXML2_LIBRARIES}
 		slutils_arclink
-		crypto
+		${crypto}
 )
 
 TARGET_LINK_LIBRARIES(
 	arclinkpass
-		crypto
+		${crypto}
 )
 
 SC_INSTALL_INIT(arclink config/arclink.py)
