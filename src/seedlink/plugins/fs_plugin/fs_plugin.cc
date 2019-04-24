@@ -501,6 +501,15 @@ Stream logs = make_stream(SystemLog());
 
 }
 
+#if defined(__APPLE__)
+// On macOS avoid compilation error: cannot define or redeclare 'registered' here because namespace 'PluginModule' does not enclose namespace
+template<>
+RegisteredModule<FS_Input>* RegisteredModule<FS_Input>::registered = NULL;
+
+template<>
+RegisteredModule<FS_Decoder>* RegisteredModule<FS_Decoder>::registered = NULL;
+
+#else
 namespace PluginModule {
 
 template<>
@@ -510,6 +519,7 @@ template<>
 RegisteredModule<FS_Decoder>* RegisteredModule<FS_Decoder>::registered = NULL;
 
 }
+#endif
 
 //*****************************************************************************
 // Main
