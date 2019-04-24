@@ -296,7 +296,7 @@
 
 /* Macros for socket portability (sort of...) */
 
-#if defined unix
+#if defined(unix) || defined(__APPLE__)
     typedef int SOCKET;
 #   define INVALID_SOCKET -1
 #   ifndef INADDR_NONE

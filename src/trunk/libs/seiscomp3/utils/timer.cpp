@@ -19,7 +19,7 @@
 #include <assert.h>
 #include <iostream>
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
 #include <errno.h>
 #include <string.h>
 
@@ -91,7 +91,7 @@ Seiscomp::Core::TimeSpan StopWatch::elapsed() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-#ifdef WIN32
+#if defined(WIN32) || defined(__APPLE__)
 Timer::TimerList Timer::_timers;
 boost::thread *Timer::_thread = NULL;
 boost::mutex Timer::_mutex;
@@ -104,7 +104,7 @@ boost::mutex Timer::_mutex;
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Timer::Timer(unsigned int timeout) {
 	_singleShot = false;
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
 	_timerID = 0;
 #else
 	_isActive = false;
@@ -118,7 +118,7 @@ Timer::Timer(unsigned int timeout) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Timer::~Timer() {
-#ifdef WIN32
+#if defined(WIN32) || defined(__APPLE__)
 	if ( _isActive )
 		deactivate(true);
 #else
@@ -133,8 +133,9 @@ Timer::~Timer() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Timer::setTimeout(unsigned int timeout) {
 	_timeout = timeout;
-#ifdef WIN32
+#if defined(WIN32) || defined(__APPLE__)
 	if ( !_timeout && _isActive )
+		stop();
 #else
 	_timeoutNs = 0;
 	if ( !_timeout && !_timeoutNs && _timerID )
@@ -148,7 +149,7 @@ void Timer::setTimeout(unsigned int timeout) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Timer::setTimeout2(unsigned int seconds, unsigned int nanoseconds) {
-#ifdef WIN32
+#if defined(WIN32) || defined(__APPLE__)
 	if ( nanoseconds )
 		return false;
 
@@ -189,14 +190,14 @@ void Timer::setSingleShot(bool s) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Timer::start() {
-#ifdef WIN32
+#if defined(WIN32) || defined(__APPLE__)
 	if ( !_timeout )
 #else
 	if ( !_timeout && !_timeoutNs )
 #endif
 		return false;
 
-#ifdef WIN32
+#if defined(WIN32) || defined(__APPLE__)
 	boost::mutex::scoped_lock lk(_mutex);
 
 	if ( _isActive )
@@ -262,7 +263,7 @@ bool Timer::start() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Timer::stop() {
-#ifdef WIN32
+#if defined(WIN32) || defined(__APPLE__)
 	return deactivate(false);
 #else
 	return destroy();
@@ -275,7 +276,7 @@ bool Timer::stop() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Timer::disable() {
-#ifdef WIN32
+#if defined(WIN32) || defined(__APPLE__)
 	if ( _isActive )
 		return deactivate(true);
 	return false;
@@ -289,7 +290,7 @@ bool Timer::disable() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-#ifdef WIN32
+#if defined(WIN32) || defined(__APPLE__)
 bool Timer::deactivate(bool remove) {
 	assert(_isActive == true);
 
@@ -332,7 +333,7 @@ bool Timer::destroy() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Timer::isActive() const {
-#ifdef WIN32
+#if defined(WIN32) || defined(__APPLE__)
 	return _isActive;
 #else
 	return _timerID > 0;
@@ -344,7 +345,7 @@ bool Timer::isActive() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-#ifdef WIN32
+#if defined(WIN32) || defined(__APPLE__)
 void Timer::Loop() {
 	do {
 		Core::sleep(1);
