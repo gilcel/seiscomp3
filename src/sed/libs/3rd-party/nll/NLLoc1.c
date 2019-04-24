@@ -72,6 +72,11 @@ tel: +33(0)493752502  e-mail: anthony@alomax.net  web: http://www.alomax.net
 #include "custom_eth/eth_functions.h"
 #endif
 
+#ifdef __APPLE__
+#include "open_memstream-osx/open_memstream.h"
+#include "open_memstream-osx/fmemopen.h"
+#endif
+
 /** function to perform global search event locations */
 
 int NLLoc
