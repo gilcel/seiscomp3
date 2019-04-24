@@ -1,5 +1,9 @@
 #SUBDIRS(archive records recordstream gfarchive xml)
 
+IF(MACOSX)
+	INCLUDE_DIRECTORIES(${OPENSSL_INCLUDE_DIR})
+ENDIF(MACOSX)
+
 SET(IO_SOURCES
 	database.cpp
 	importer.cpp
