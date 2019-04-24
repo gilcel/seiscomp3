@@ -59,7 +59,7 @@
 
 #include <boost/bind.hpp>
 
-#ifdef MACOSX
+#ifdef __APPLE__
 #include <seiscomp3/gui/core/osx.h>
 #endif
 
@@ -2328,7 +2328,7 @@ RecordLabel* PickerView::createLabel(RecordViewItem *item) const {
 void PickerView::init() {
 	setObjectName("Picker");
 
-#ifdef MACOSX
+#ifdef __APPLE__
 	Mac::addFullscreen(this);
 #endif
 
@@ -3471,7 +3471,7 @@ void PickerView::showEvent(QShowEvent *e) {
 			QVariant geometry = SCApp->settings().value("geometry");
 			restoreState(SCApp->settings().value("state").toByteArray());
 			restoreGeometry(geometry.toByteArray());
-#ifdef MACOSX
+#ifdef __APPLE__
 			Mac::addFullscreen(this);
 #endif
 
@@ -4061,7 +4061,7 @@ void PickerView::showFullscreen(bool e) {
 		showFullScreen();
 	else {
 		showNormal();
-#ifdef MACOSX
+#ifdef __APPLE__
 		Mac::addFullscreen(this);
 #endif
 	}

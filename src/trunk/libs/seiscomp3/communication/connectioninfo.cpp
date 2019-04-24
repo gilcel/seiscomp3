@@ -33,7 +33,7 @@
 #include <boost/bind.hpp>
 
 #include <seiscomp3/core/platform/platform.h>
-#ifdef MACOSX
+#ifdef __APPLE__
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
@@ -412,7 +412,7 @@ const std::string& ConnectionInfo::programName()
 
 #endif
 
-#ifdef MACOSX
+#ifdef __APPLE__
 	const char* programName  = getprogname();
 	if ( programName )
 	    _programName = programName;
@@ -487,7 +487,7 @@ int ConnectionInfo::totalMemory()
 	Core::fromString(_totalMemory, tokens[0]);
 #endif
 
-#ifdef MACOSX
+#ifdef __APPLE__
 	int mib[2];
 	size_t size = sizeof(int);
 
@@ -540,7 +540,7 @@ int ConnectionInfo::memoryUsage()
 	Core::fromString(_usedMemory, tokens[0]);
 #endif
 
-#ifdef MACOSX
+#ifdef __APPLE__
 	/*
 	 struct rusage myRUsage;
 	_usedMemory = 0;

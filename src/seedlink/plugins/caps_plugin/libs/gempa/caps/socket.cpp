@@ -381,7 +381,7 @@ int Socket::send(const char *data) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int Socket::write(const char *data, int len) {
-#if !defined(MACOSX) && !defined(WIN32)
+#if !defined(__APPLE__) && !defined(WIN32)
 	int sent = (int)::send(_fd, data, len, MSG_NOSIGNAL);
 #else
 	int sent = (int)::send(_fd, data, len, 0);

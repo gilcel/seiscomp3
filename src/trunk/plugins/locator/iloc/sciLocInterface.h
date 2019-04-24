@@ -45,7 +45,7 @@
 /*
  * Lapack (MacOS)
  */
-#ifdef MACOSX
+#ifdef __APPLE__
 #include <Accelerate/Accelerate.h>
 #endif
 /*

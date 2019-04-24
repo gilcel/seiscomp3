@@ -127,7 +127,7 @@ struct AppResolver : public Util::VariableResolver {
 
 /*
 void printTraces() {
-    #ifndef MACOSX
+    #ifndef __APPLE__
 	void *array[20];
 	size_t size;
 	char **strings;

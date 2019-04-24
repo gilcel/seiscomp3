@@ -17,7 +17,7 @@
  *  Signal handling
  */
 #include <signal.h>
-#ifdef MACOSX
+#ifdef __APPLE__
 	typedef void (*sighandler_t)(int);
 #else
 	#include <execinfo.h>
@@ -26,7 +26,7 @@
 /*
  * Header files for malloc
  */
-#ifdef MACOSX
+#ifdef __APPLE__
     #include <stdlib.h>
     #include <malloc/malloc.h>
 #else
