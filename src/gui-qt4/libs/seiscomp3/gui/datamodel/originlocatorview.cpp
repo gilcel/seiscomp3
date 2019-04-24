@@ -1353,10 +1353,16 @@ typedef std::map<PickPhase, PickWithFlags> PickedPhases;
 
 }
 
-
+// clang gives error, addition of default argument on redeclaration makes this constructor a default constructor
+#ifdef __APPLE__ 
+ArrivalDelegate::ArrivalDelegate(QWidget *parent)
+: QStyledItemDelegate(parent)
+, _margin(2), _spacing(4), _statusRectWidth(6), _labelWidth(0) {
+#else
 ArrivalDelegate::ArrivalDelegate(QWidget *parent = NULL)
 : QStyledItemDelegate(parent)
 , _margin(2), _spacing(4), _statusRectWidth(6), _labelWidth(0) {
+#endif
 	_flags[0] = Seismology::LocatorInterface::F_TIME;
 	_flags[1] = Seismology::LocatorInterface::F_SLOWNESS;
 	_flags[2] = Seismology::LocatorInterface::F_BACKAZIMUTH;
