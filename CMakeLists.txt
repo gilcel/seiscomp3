@@ -136,6 +136,62 @@ IF (CMAKE_COMPILER_IS_GNUCC)
 	ENDIF(GCC_VERSION_MAJOR GREATER 5)
 ENDIF (CMAKE_COMPILER_IS_GNUCC)
 
+# Set some specific settings for Mac OS X - macOS - Darwin
+#
+IF (MACOSX)
+
+    # OpenSSL with Homebrew
+	FIND_PACKAGE(OpenSSL REQUIRED)
+		        
+    # Set RPATH for Mac OS X - Darwin
+    SET(CMAKE_MACOSX_RPATH ON)
+    
+    # use, i.e. don't skip the full RPATH for the build tree
+    SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+    
+    # when building, don't use the install RPATH already
+    # (but later on when installing)
+    SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
+
+    # add the automatically determined parts of the RPATH
+    # which point to directories outside the build tree to the install RPATH
+    SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+    # the RPATH to be used when installing, but only if it's not a system directory
+    LIST(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
+    IF("${isSystemDir}" STREQUAL "-1")
+        SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+    ENDIF("${isSystemDir}" STREQUAL "-1")
+    
+	SET(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+		
+	# Use clang compiler
+	IF (NOT DEFINED CMAKE_CXX_COMPILER)
+		SET(CMAKE_CXX_COMPILER "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++")
+		IF (NOT EXISTS "${CMAKE_CXX_COMPILER}")
+			SET(CMAKE_CXX_COMPILER "clang++")
+		ENDIF(NOT EXISTS "${CMAKE_CXX_COMPILER}")
+	ENDIF(NOT DEFINED CMAKE_CXX_COMPILER)
+	
+	IF (NOT DEFINED CMAKE_C_COMPILER)
+		SET(CMAKE_C_COMPILER "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang")
+		IF (NOT EXISTS "${CMAKE_C_COMPILER}")
+			SET(CMAKE_C_COMPILER "clang")
+		ENDIF(NOT EXISTS "${CMAKE_C_COMPILER}")
+	ENDIF(NOT DEFINED CMAKE_C_COMPILER)
+	
+	# clang defaults to C++14 which might break compilation, set to C++98
+	# clang version 10.0.1 c++11 or c++14 have constexpr issues
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98 -Wno-deprecated-declarations")
+	  
+	# Use explicitly QT4 (don't use QT5 if also installed)
+	SET(QT4_DIR "/usr/local/opt/qt@4/")
+	SET(QT_INCLUDE_DIR "/usr/local/opt/qt@4/include")
+	SET(QT_LIBRARY_DIR "/usr/local/opt/qt@4/lib")
+	SET(QT_QMAKE_EXECUTABLE "/usr/local/opt/qt@4/bin/qmake")
+
+ENDIF (MACOSX)
+
 # Set the platform specific suffix for dynamic libraries
 ADD_DEFINITIONS(
     -DSHARED_LIBRARY_SUFFIX="${CMAKE_SHARED_LIBRARY_SUFFIX}"
