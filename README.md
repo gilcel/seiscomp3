@@ -20,7 +20,11 @@ After compilation SeisComP3-macOS will be installed in your Home Directory: ${HO
 
 ## Pre-Requirements
 
-- Apple Xcode 9.x or later (clang command-line installation works or download Xcode from the App Store)
+- Apple Xcode 9.x or Xcode 10.x or
+- or "clang compiler" command-line, install with:
+```
+  xcode-select --install
+```
 - GNU GFortran 6.3 or later
 - Homebrew package manager for macOS
 
@@ -57,16 +61,18 @@ or you could rename Macports default directory /opt/local to /opt/local.OFF
 
 ### Install seiscomp3 dependencies
 
-With Homebrew installed now, we just need to install seiscomp3 dependencies packages for macOS:
+With Homebrew installed, install seiscomp3 dependencies packages for macOS:
 ```
 brew install cmake
-brew install boost
-
 brew install flex
 brew install openssl
 brew install md5sha1sum
 ```
 
+Install Boost v1.60, since seiscomp3 is incompatible with Boost versions > 1.70
+```
+brew install boost@1.60
+```
 
 ### Install qt4 for the GUI with Homebrew
 
@@ -128,8 +134,6 @@ Note: The zipped filename contains the Branch-name at the beginning...
 mv ~/Downloads/seiscomp3-macos-seiscomp3-jakarta-macos.zip ~/Downloads/seiscomp3-jakarta-macos.zip
 ```
 
-
-
 Move the zipped file to the ~/Downloads/seiscomp3-git folder:
 
 ```
@@ -155,7 +159,7 @@ cmake -DCMAKE_INSTALL_PREFIX=${HOME}/seiscomp3 -DSC_GLOBAL_GUI=ON -DPYTHON_EXECU
 
 If everything compiled fine, the files will be installed in ${HOME}/seiscomp3
  
-### Increase max open files for seedlink on System Startup
+### Increase max open files for seedlink on macOS System Startup
 
 To avoid getting seedlink errors when starting seiscomp3 with "files open exceed max files ...",
 increase the max open files on system's startup.
