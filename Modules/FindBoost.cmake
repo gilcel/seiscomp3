@@ -74,6 +74,7 @@ IF(WIN32)
 ENDIF(WIN32)
 
 
+
 SET(BOOST_INCLUDE_PATH_DESCRIPTION "directory containing the boost include files. E.g /usr/local/include/boost-1_33_1 or c:\\boost\\include\\boost-1_33_1")
 
 SET(BOOST_DIR_MESSAGE "Set the Boost_INCLUDE_DIR cmake cache entry to the ${BOOST_INCLUDE_PATH_DESCRIPTION}")
@@ -104,6 +105,7 @@ SET(SUFFIX_FOR_PATH
  boost-1_33_0
 )
 
+
 #
 # Look for an installation.
 #
@@ -118,6 +120,25 @@ FIND_PATH(Boost_INCLUDE_DIR NAMES boost/config.hpp PATH_SUFFIXES ${SUFFIX_FOR_PA
 
 # Assume we didn't find it.
 SET(Boost_FOUND 0)
+
+IF(APPLE)
+    # Check if Homebrew Boost library v1.60 is installed in /usr/local/opt/boost@1.60/
+	MESSAGE("Checking for Boost 1.6.0 (from Homebrew) in /usr/local/opt/boost@1.60/")
+    IF(EXISTS /usr/local/opt/boost@1.60/)	
+   		SET(Boost_LIBRARY_DIR /usr/local/opt/boost@1.60/lib/)
+   		SET(Boost_INCLUDE_DIR /usr/local/opt/boost@1.60/include/)
+   		SET(Boost_LIBRARY_DIRS /usr/local/opt/boost@1.60/lib/)
+  		SET(Boost_INCLUDE_DIRS /usr/local/opt/boost@1.60/include/)
+  		INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+        LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
+  	    SET(BOOST_FOUND 1)
+ 	ELSE()
+   		MESSAGE(FATAL_ERROR "Could NOT find Homebrew version of Boost v1.60 in /usr/local/opt/boost@1.60/ - aborting")
+   		MESSAGE(FATAL_ERROR "Try to install with command: brew install boost@1.60")
+   		SET(BOOST_FOUND 0)
+	ENDIF()
+ENDIF(APPLE)
+
 
 # Now try to get the include and library path.
 IF(Boost_INCLUDE_DIR)
@@ -162,7 +183,7 @@ ENDIF(Boost_INCLUDE_DIR)
 #
 # Find boost libraries
 #
-
+	  
 # List of library suffixes to search, e.g. libboost_date_time-gcc
 SET(BOOST_SUFFIX_SEARCH 
   gcc
@@ -274,6 +295,8 @@ MACRO(BOOST_FIND_LIBRARY name)
   ENDIF(Boost_${name}_LIBRARY)
 ENDMACRO(BOOST_FIND_LIBRARY)
 
+MESSAGE("Gilles DEBUG - Boost_LIBRARY_DIRS= ${Boost_LIBRARY_DIRS} & Boost_INCLUDE_DIRS: ${Boost_INCLUDE_DIRS}")
+
 IF(Boost_LIBRARY_DIRS)
   # If the user specified required components e.g. via 
   # FIND_PACKAGE(Boost REQUIRED date_time regex)
@@ -322,12 +345,13 @@ IF(Boost_filesystem_FOUND)
   ENDIF(Boost_system_FOUND)
 ENDIF(Boost_filesystem_FOUND)
 
+
 IF(NOT Boost_FOUND)
   IF(NOT Boost_FIND_QUIETLY)
-    MESSAGE(STATUS "Boost was not found. ${BOOST_DIR_MESSAGE}")
+    MESSAGE(STATUS "Gilles1-Boost was not found. ${BOOST_DIR_MESSAGE}")
   ELSE(NOT Boost_FIND_QUIETLY)
     IF(Boost_FIND_REQUIRED)
-      MESSAGE(FATAL_ERROR "Boost was not found. ${BOOST_DIR_MESSAGE}")
+      MESSAGE(FATAL_ERROR "Gilles2-Boost was not found. ${BOOST_DIR_MESSAGE}")
     ENDIF(Boost_FIND_REQUIRED)
   ENDIF(NOT Boost_FIND_QUIETLY)
 ELSE(NOT Boost_FOUND)
