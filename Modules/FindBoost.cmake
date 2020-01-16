@@ -133,8 +133,8 @@ IF(APPLE)
         LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
   	    SET(BOOST_FOUND 1)
  	ELSE()
-   		MESSAGE(FATAL_ERROR "Could NOT find Homebrew version of Boost v1.60 in /usr/local/opt/boost@1.60/ - aborting")
-   		MESSAGE(FATAL_ERROR "Try to install with command: brew install boost@1.60")
+   		MESSAGE(FATAL_ERROR "Homebrew version of Boost@1.60 in /usr/local/opt/boost@1.60/ not found!")
+   		MESSAGE(FATAL_ERROR "Install Boost@1.60 with command: brew install boost@1.60")
    		SET(BOOST_FOUND 0)
 	ENDIF()
 ENDIF(APPLE)
@@ -295,7 +295,6 @@ MACRO(BOOST_FIND_LIBRARY name)
   ENDIF(Boost_${name}_LIBRARY)
 ENDMACRO(BOOST_FIND_LIBRARY)
 
-MESSAGE("Gilles DEBUG - Boost_LIBRARY_DIRS= ${Boost_LIBRARY_DIRS} & Boost_INCLUDE_DIRS: ${Boost_INCLUDE_DIRS}")
 
 IF(Boost_LIBRARY_DIRS)
   # If the user specified required components e.g. via 
