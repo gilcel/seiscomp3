@@ -1,26 +1,29 @@
-# SeisComP3 for macOS compilation notes
+# SeisComP3 for macOS port
 
-Project homepage: http://www.seiscomp3.org
+This is the ported version of SeisComP3 for Mac OS X / macOS.
 
-This software has been developed by the [GEOFON Program](http://geofon.gfz-potsdam.de) at [Helmholtz Centre Potsdam, GFZ German Research Centre for Geosciences](http://www.gfz-potsdam.de) and [gempa GmbH](http://www.gempa.de).
+Original project homepage: http://www.seiscomp3.org
+
+The original software has been developed by the [GEOFON Program](http://geofon.gfz-potsdam.de) at [Helmholtz Centre Potsdam, GFZ German Research Centre for Geosciences](http://www.gfz-potsdam.de) and [gempa GmbH](http://www.gempa.de).
 
 SeisComP3 is distributed under the [SeisComP Public License](COPYING)
 
 ## A quick tutorial to compile SeisComP3 on macOS
 
-macOS compilation has been succesful on:
+SeisComP3-macOS has been succesfully compiled on:
+
 - Mac OS X El Capitan 10.11.x
 - macOS Sierra 10.12.x
 - macOS High Sierra 10.13.x
 - macOS Mojave 10.14.x
-- with Apple Xcode 9.x / 10.1 and 10.2.x
-- gfortran 6.3 and later
+- macOS Catalina 10.15.x
+
 
 After compilation SeisComP3-macOS will be installed in your Home Directory: ${HOME}/seiscomp3
 
 ## Pre-Requirements
 
-- Apple Xcode 9.x or Xcode 10.x or
+- Apple Xcode 9.x or Xcode 10.x or Xcode 11.x (depends on your macOS version)
 - or "clang compiler" command-line, install with:
 ```
   xcode-select --install
@@ -65,9 +68,32 @@ With Homebrew installed, install seiscomp3 dependencies packages for macOS:
 ```
 brew install cmake
 brew install flex
-brew install openssl
 brew install md5sha1sum
 ```
+
+Check installed version of OpenSSL with:
+```
+brew list openssl
+```
+It should point to OpenSSL v1.11 and later:
+```
+/usr/local/Cellar/openssl@1.1/1.1.1d/bin/openssl
+/usr/local/Cellar/openssl@1.1/1.1.1d/include/openssl/ (104 files)
+/usr/local/Cellar/openssl@1.1/1.1.1d/lib/libcrypto.1.1.dylib
+/usr/local/Cellar/openssl@1.1/1.1.1d/lib/libssl.1.1.dylib
+....
+```
+
+If an older version is installed (like OpenSSL 1.0), then delete this version
+```
+brew uninstall openssl
+```
+
+Then (re)install latest version of OpenSSL with Homebrew:
+```
+brew install openssl
+```
+
 
 Install Boost v1.60, since seiscomp3 is incompatible with Boost versions > 1.70
 ```
@@ -90,7 +116,7 @@ brew install qt@4
 
 ### Install MySQL 5.7 instead of current MySQL 8
 The latest Homebrew version installs MySQL8 by default, which seems to have some
-upgrade issues with Seiscomp3 InnoDB.
+upgrade issues with Seiscomp3 InnoDB (this has been fixed recently)
 
 We just install MySQL 5.7 instead:
 
@@ -119,34 +145,34 @@ MySQL Workbench from Oracle is a free GUI to administer MySQL databases.
 
 ### Build seiscomp3 for macOS
 
-After downloading the zipped "seiscomp3-jakarta-macos.zip" to your Downloads folder move this zipped file to a new directory, e.g.: "seiscomp3-git".
-Also create a build-directory e.g. builds-seiscomp3-macos, like this:
+After downloading the zipped "seiscomp3-macos-master.zip" to your Downloads folder move it to a new directory, e.g.: "seiscomp3-git".
+Also create the installation directory and build-directory e.g. builds-seiscomp3-macos, like this:
+
+Create the installation directory in your Home folder:
+```
+mkdir -p ${HOME}/seiscomp3
+```
+
+Create the build-directory:
 
 ```
 mkdir ~/Downloads/seiscomp3-git
 mkdir ~/Downloads/seiscomp3-git/builds-seiscomp3-macos
 ```
 
-For easier setup ename the zipped file seiscomp3-macos-seiscomp3-jakarta-macos.zip to "seiscomp3-jakarta-macos.zip"
-Note: The zipped filename contains the Branch-name at the beginning...
-
-```
-mv ~/Downloads/seiscomp3-macos-seiscomp3-jakarta-macos.zip ~/Downloads/seiscomp3-jakarta-macos.zip
-```
-
 Move the zipped file to the ~/Downloads/seiscomp3-git folder:
 
 ```
-mv ~/Downloads/seiscomp3-jakarta-macos.zip  ~/Downloads/seiscomp3-git/
+mv ~/Downloads/seiscomp3-macos-master.zip  ~/Downloads/seiscomp3-git/
 cd ~/Downloads/seiscomp3-git/
-unzip ~/Downloads/seiscomp3-jakarta-macos.zip
+unzip ~/Downloads/seiscomp3-macos-master.zip
 ```
 
 Now we are ready to compile seiscomp3-macos with GUI manually from the builds directory, like this:
 
 ```
 cd builds-seiscomp3-macos
-cmake -DCMAKE_INSTALL_PREFIX=${HOME}/seiscomp3 -DSC_GLOBAL_GUI=ON ../seiscomp3-jakarta-macos
+cmake -DCMAKE_INSTALL_PREFIX=${HOME}/seiscomp3 -DSC_GLOBAL_GUI=ON ../seiscomp3-macos-master
 make -j 2
 make install
 ```
@@ -154,10 +180,16 @@ make install
 Note: If you have installed Python versions with Homebrew and want to use this Python installation, rather than the System's default, then use cmake like this (e.g with python 2.7):
 
 ```
-cmake -DCMAKE_INSTALL_PREFIX=${HOME}/seiscomp3 -DSC_GLOBAL_GUI=ON -DPYTHON_EXECUTABLE:FILEPATH=/usr/local/bin/python -DPYTHON_LIBRARY=/usr/local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/lib/libpython2.7.dylib ../seiscomp3-jakarta-macos`
+cmake -DCMAKE_INSTALL_PREFIX=${HOME}/seiscomp3 -DSC_GLOBAL_GUI=ON -DPYTHON_EXECUTABLE:FILEPATH=/usr/local/bin/python -DPYTHON_LIBRARY=/usr/local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/lib/libpython2.7.dylib ../seiscomp3-macos-master`
 ```
 
-If everything compiled fine, the files will be installed in ${HOME}/seiscomp3
+If everything compiled fine, the files will be installed in ${HOME}/seiscomp3.
+
+Start for the GUI application 'scrttv' from ${HOME}/seiscomp3/bin/scrttv
+```
+${HOME}/seiscomp3/bin/scrttv
+```
+
  
 ### Increase max open files for seedlink on macOS System Startup
 
@@ -199,7 +231,7 @@ Launch it with command:
 `sudo launchctl load -w /Library/LaunchDaemons/limit.seiscomp3-maxfiles.plist`
 
 ### Check current seiscomp3 configuration
-http://www.seiscomp3.org/doc/jakarta/current/apps/global.html
+https://docs.gempa.de/seiscomp3/current/apps/global.html
 
 ### Troubleshooting
 
@@ -219,3 +251,4 @@ to this line:
 
 Then in the Terminal, source your ~/.bashrc file:
 `source ~/.bashrc`
+
