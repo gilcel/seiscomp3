@@ -8,6 +8,8 @@ The original software has been developed by the [GEOFON Program](http://geofon.g
 
 SeisComP3 is distributed under the [SeisComP Public License](COPYING)
 
+![img](http://www.ecgs.lu/gilles/wp-content/uploads/seiscomp3-macos_screenshot-1024x576.png)
+
 ## A quick tutorial to compile SeisComP3 on macOS
 
 SeisComP3-macOS has been succesfully compiled on:
