@@ -29,7 +29,15 @@ FIND_PACKAGE(LibXml2 REQUIRED)
 OPTION(SC_GLOBAL_PYTHON_WRAPPER "Create Python wrappers" ON)
 OPTION(SC_GLOBAL_PYTHON_WRAPPER_NUMPY "Add Numpy support for Python wrapper" OFF)
 
-FIND_PACKAGE(PythonInterp)
+IF (APPLE)
+    # Set Homebrew's Python3 variables
+    SET(PYTHON_CONFIG_EXECUTABLE /usr/local/bin/python3-config)
+    SET(PYTHON_EXECUTABLE /usr/local/bin/python3)
+    find_package (Python3 COMPONENTS Interpreter Development)
+ELSE (APPLE)
+    FIND_PACKAGE(PythonInterp)
+ENDIF (APPLE)    
+
 EXEC_PROGRAM(
 	${PYTHON_EXECUTABLE}
 	ARGS "-c \"from __future__ import print_function;import sys;print(sys.version[:3])\""
