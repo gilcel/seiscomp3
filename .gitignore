@@ -241,3 +241,4 @@
 
 # Ignore Mac DS_Store files (globally)
 .DS_Store
+src/trunk/libs/3rd-party/spread/libspread-util/include/spu_system.h
