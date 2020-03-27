@@ -188,12 +188,9 @@ IF (MACOSX)
 		ENDIF(NOT EXISTS "${CMAKE_C_COMPILER}")
 	ENDIF(NOT DEFINED CMAKE_C_COMPILER)
 	
-	# clang defaults to C++14 which might break compilation, set to C++98
-	# clang version 10.0.1 c++11 or c++14 have constexpr issues
-	
-	# Use Homebrew Qt5 for macOS
-	SET(Qt5_DIR /usr/local/opt/qt/)
-	find_package(Qt5 COMPONENTS Core REQUIRED)
+	# clang defaults to C++14 which might break compilation. Setting to C++11 works.
+	# clang version > v8.0 may have constexpr issues in C++11 or C++14.
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-deprecated-declarations")
 	
 ENDIF (MACOSX)
 
