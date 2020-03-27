@@ -190,14 +190,11 @@ IF (MACOSX)
 	
 	# clang defaults to C++14 which might break compilation, set to C++98
 	# clang version 10.0.1 c++11 or c++14 have constexpr issues
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98 -Wno-deprecated-declarations")
-	  
-	# Use explicitly QT4 (don't use QT5 if also installed)
-	SET(QT4_DIR "/usr/local/opt/qt@4/")
-	SET(QT_INCLUDE_DIR "/usr/local/opt/qt@4/include")
-	SET(QT_LIBRARY_DIR "/usr/local/opt/qt@4/lib")
-	SET(QT_QMAKE_EXECUTABLE "/usr/local/opt/qt@4/bin/qmake")
-
+	
+	# Use Homebrew Qt5 for macOS
+	SET(Qt5_DIR /usr/local/opt/qt/)
+	find_package(Qt5 COMPONENTS Core REQUIRED)
+	
 ENDIF (MACOSX)
 
 # Set the platform specific suffix for dynamic libraries
