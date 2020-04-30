@@ -12,10 +12,8 @@ SeisComP3 is distributed under the [SeisComP Public License](COPYING)
 
 ## A quick tutorial to compile SeisComP3 on macOS
 
-SeisComP3-macOS has been succesfully compiled on:
+SeisComP3-macOS installs on:
 
-- Mac OS X El Capitan 10.11.x
-- macOS Sierra 10.12.x
 - macOS High Sierra 10.13.x
 - macOS Mojave 10.14.x
 - macOS Catalina 10.15.x
@@ -97,16 +95,20 @@ brew install openssl
 ```
 
 
-Install Boost v1.60, since seiscomp3 is incompatible with Boost versions > 1.70
+Install Boost v1.60, since seiscomp3 is incompatible with Boost versions > 1.60
 ```
 brew install boost@1.60
 ```
 
-### Install qt4 for the GUI with Homebrew
+### Install Qt5 for the GUI
 
-Qt 4.x is no longer officialy supported by Homebrew - by default Qt version 5 is installed.
+Note: macOS 10.13 and later is required for Qt5.
+`brew install qt`
+
+
+If you need Qt4 for any reason (macOS < 10.13 ):
+Qt4 is no longer officialy supported by Homebrew 
 [See homebrew-qt4 page] (https://github.com/cartr/homebrew-qt4)
-
 `brew install qt@4`
 
 If this doesn't work then try with command:
@@ -116,11 +118,11 @@ brew tap-pin cartr/qt4
 brew install qt@4
 ```
 
-### Install MySQL 5.7 instead of current MySQL 8
+### Install MySQL 5.7 (instead of current MySQL 8)
 The latest Homebrew version installs MySQL8 by default, which seems to have some
-upgrade issues with Seiscomp3 InnoDB (this has been fixed recently)
+upgrade issues with Seiscomp3 InnoDB (but this has been fixed recently).
 
-We just install MySQL 5.7 instead:
+Just install MySQL 5.7 instead:
 
 ```
 brew install mysql@5.7

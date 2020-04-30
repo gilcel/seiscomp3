@@ -31,9 +31,11 @@ OPTION(SC_GLOBAL_PYTHON_WRAPPER_NUMPY "Add Numpy support for Python wrapper" OFF
 
 IF (APPLE)
     # Set Homebrew's Python3 variables
-    SET(PYTHON_CONFIG_EXECUTABLE /usr/local/bin/python3-config)
-    SET(PYTHON_EXECUTABLE /usr/local/bin/python3)
-    find_package (Python3 COMPONENTS Interpreter Development)
+    # SET(PYTHON_CONFIG_EXECUTABLE /usr/local/bin/python3-config)
+    # SET(PYTHON_EXECUTABLE /usr/local/bin/python3)
+    # FIND_PACKAGE (Python3 COMPONENTS Interpreter Development)
+    # FIND_PACKAGE(PythonInterp 2.7 REQUIRED)
+    FIND_PACKAGE(Python2 COMPONENTS Interpreter Development)
 ELSE (APPLE)
     FIND_PACKAGE(PythonInterp)
 ENDIF (APPLE)    
@@ -146,8 +148,11 @@ ENDIF (CMAKE_COMPILER_IS_GNUCC)
 
 # Set some specific settings for Mac OS X - macOS - Darwin
 #
-IF (MACOSX)
-
+IF (APPLE)
+    
+    set(CMAKE_OSX_ARCHITECTURES "x86_64")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13.0" CACHE STRING "")
+    
     # OpenSSL with Homebrew
 	FIND_PACKAGE(OpenSSL REQUIRED)
 		        
@@ -189,10 +194,9 @@ IF (MACOSX)
 	ENDIF(NOT DEFINED CMAKE_C_COMPILER)
 	
 	# clang defaults to C++14 which might break compilation. Setting to C++11 works.
-	# clang version > v8.0 may have constexpr issues in C++11 or C++14.
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-deprecated-declarations")
 	
-ENDIF (MACOSX)
+ENDIF (APPLE)
 
 # Set the platform specific suffix for dynamic libraries
 ADD_DEFINITIONS(
