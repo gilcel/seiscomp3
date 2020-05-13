@@ -47,20 +47,15 @@ IF(WIN32 AND MSVC)
    MARK_AS_ADVANCED(SSL_EAY_DEBUG SSL_EAY_RELEASE)
 ENDIF ( WIN32 AND MSVC )
 
-
-# Modified by Gilles Celli, <gilles.celli@ecgs.lu>
-# Support for macOS / MacOS X when using Homebrew
-
 IF(MACOSX)
     # Check if OpenSSL was installed by Homebrew in /usr/local/opt/openssl/
 	MESSAGE("Checking Homebrew version of OpenSSL in /usr/local/opt/openssl/")
 	IF (EXISTS "/usr/local/opt/openssl/lib/libssl.dylib" AND EXISTS "/usr/local/opt/openssl/lib/libcrypto.dylib" )
-	    SET(OPENSSL_LIBRARIES "/usr/local/opt/openssl/lib/libcrypto.dylib")
-  		SET(OPENSSL_INCLUDE_DIR "/usr/local/opt/openssl/include/")
-		SET(SSL "/usr/local/opt/openssl/lib/libssl.dylib")
-  		SET(crypto "/usr/local/opt/openssl/lib/libcrypto.dylib")
-  		SET(CRYPTO "/usr/local/opt/openssl/lib/libcrypto.dylib")
-  		MESSAGE(STATUS "Homewbrew OpenSSL version found: ${OPENSSL_VERSION} ${OPENSSL_INCLUDE_DIR} ${OPENSSL_LIBRARIES}")
+	    SET(OPENSSL_LIBRARIES /usr/local/opt/openssl/lib/)
+	    SET(OPENSSL_INCLUDE_DIR /usr/local/opt/openssl/include/)
+		SET(SSL /usr/local/opt/openssl/lib/libssl.dylib)
+  		SET(CRYPTO /usr/local/opt/openssl/lib/libcrypto.dylib)
+  		MESSAGE(STATUS "Homewbrew OpenSSL found: ${OPENSSL_INCLUDE_DIR} ${OPENSSL_LIBRARIES}")
 	ELSE()
 	    MESSAGE(FATAL_ERROR "Could NOT find Homebrew version of OpenSSL in /usr/local/opt/openssl/")
 	ENDIF()
