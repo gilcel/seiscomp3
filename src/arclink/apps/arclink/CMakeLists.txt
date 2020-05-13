@@ -19,27 +19,37 @@ SET(ARCLINK_HEADERS
 INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_DIR})
 INCLUDE_DIRECTORIES(../../libs/slutils)
 
-IF(MACOSX)
-	INCLUDE_DIRECTORIES(${OPENSSL_INCLUDE_DIR})
-ENDIF(MACOSX)
-
 SET(OPTIONS -DSYSLOG_FACILITY=LOG_LOCAL0)
 ADD_DEFINITIONS(${OPTIONS})
 
 ADD_EXECUTABLE(arclinkpass ${ARCLINKPASS_SOURCES})
 ADD_EXECUTABLE(arclink ${ARCLINK_SOURCES})
 
-TARGET_LINK_LIBRARIES(
-	arclink
+IF(MACOSX)
+    TARGET_LINK_LIBRARIES(
+	    arclink
+        ${LIBXML2_LIBRARIES}
+	    slutils_arclink
+		${CRYPTO}
+    )
+
+    TARGET_LINK_LIBRARIES(
+	    arclinkpass
+	    ${CRYPTO}
+    )
+ELSE (MACOSX)
+    TARGET_LINK_LIBRARIES(
+	    arclink
 		${LIBXML2_LIBRARIES}
 		slutils_arclink
 		${crypto}
-)
+    )
 
-TARGET_LINK_LIBRARIES(
-	arclinkpass
+    TARGET_LINK_LIBRARIES(
+	    arclinkpass
 		${crypto}
-)
+    )
+ENDIF(MACOSX)
 
 SC_INSTALL_INIT(arclink config/arclink.py)
 
