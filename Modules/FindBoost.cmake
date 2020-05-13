@@ -73,8 +73,6 @@ IF(WIN32)
   SET(Boost_LIB_DIAGNOSTIC_DEFINITIONS "-DBOOST_LIB_DIAGNOSTIC")
 ENDIF(WIN32)
 
-
-
 SET(BOOST_INCLUDE_PATH_DESCRIPTION "directory containing the boost include files. E.g /usr/local/include/boost-1_33_1 or c:\\boost\\include\\boost-1_33_1")
 
 SET(BOOST_DIR_MESSAGE "Set the Boost_INCLUDE_DIR cmake cache entry to the ${BOOST_INCLUDE_PATH_DESCRIPTION}")
@@ -121,25 +119,6 @@ FIND_PATH(Boost_INCLUDE_DIR NAMES boost/config.hpp PATH_SUFFIXES ${SUFFIX_FOR_PA
 # Assume we didn't find it.
 SET(Boost_FOUND 0)
 
-IF(APPLE)
-    # Check if Homebrew Boost library v1.60 is installed in /usr/local/opt/boost@1.60/
-	MESSAGE("Checking for Boost 1.6.0 (from Homebrew) in /usr/local/opt/boost@1.60/")
-    IF(EXISTS /usr/local/opt/boost/)	
-   		SET(Boost_LIBRARY_DIR /usr/local/opt/boost/lib/)
-   		SET(Boost_INCLUDE_DIR /usr/local/opt/boost/include/)
-   		SET(Boost_LIBRARY_DIRS /usr/local/opt/boost/lib/)
-  		SET(Boost_INCLUDE_DIRS /usr/local/opt/boost/include/)
-  		INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
-        LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
-  	    SET(BOOST_FOUND 1)
- 	ELSE()
-   		MESSAGE(FATAL_ERROR "Homebrew version of Boost@1.60 in /usr/local/opt/boost@1.60/ not found!")
-   		MESSAGE(FATAL_ERROR "Install Boost@1.60 with command: brew install boost@1.60")
-   		SET(BOOST_FOUND 0)
-	ENDIF()
-ENDIF(APPLE)
-
-
 # Now try to get the include and library path.
 IF(Boost_INCLUDE_DIR)
 
@@ -179,6 +158,20 @@ IF(Boost_INCLUDE_DIR)
     SET(Boost_LIBRARY_DIRS ${Boost_LIBRARY_DIR})
   ENDIF(Boost_LIBRARY_DIR AND EXISTS "${Boost_LIBRARY_DIR}")
 ENDIF(Boost_INCLUDE_DIR)
+
+IF(MACOSX)
+    # Check if Homebrew Boost library is installed in /usr/local/opt/boost
+	MESSAGE("Checking for Boost (Homebrew) in /usr/local/opt/boost")
+    IF(EXISTS /usr/local/opt/boost/)	
+   		SET(Boost_INCLUDE_DIR /usr/local/opt/boost/include)
+   		SET(Boost_INCLUDE_DIRS /usr/local/opt/boost/include)
+  		SET(Boost_LIBRARY_DIR /usr/local/opt/boost/lib)
+   		SET(Boost_LIBRARY_DIRS /usr/local/opt/boost/lib)
+ 	ELSE()
+   		MESSAGE(FATAL_ERROR "Homebrew version of Boost in /usr/local/opt/boost/ not found!")
+   		MESSAGE(FATAL_ERROR "Install Boost with command: brew install boost")
+	ENDIF()
+ENDIF(MACOSX)
 
 #
 # Find boost libraries
@@ -347,10 +340,10 @@ ENDIF(Boost_filesystem_FOUND)
 
 IF(NOT Boost_FOUND)
   IF(NOT Boost_FIND_QUIETLY)
-    MESSAGE(STATUS "Gilles1-Boost was not found. ${BOOST_DIR_MESSAGE}")
+    MESSAGE(STATUS "Boost was not found. ${BOOST_DIR_MESSAGE}")
   ELSE(NOT Boost_FIND_QUIETLY)
     IF(Boost_FIND_REQUIRED)
-      MESSAGE(FATAL_ERROR "Gilles2-Boost was not found. ${BOOST_DIR_MESSAGE}")
+      MESSAGE(FATAL_ERROR "Boost was not found. ${BOOST_DIR_MESSAGE}")
     ENDIF(Boost_FIND_REQUIRED)
   ENDIF(NOT Boost_FIND_QUIETLY)
 ELSE(NOT Boost_FOUND)
