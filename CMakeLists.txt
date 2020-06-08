@@ -30,25 +30,42 @@ OPTION(SC_GLOBAL_PYTHON_WRAPPER "Create Python wrappers" ON)
 OPTION(SC_GLOBAL_PYTHON_WRAPPER_NUMPY "Add Numpy support for Python wrapper" OFF)
 
 IF (APPLE)
-    # Set Homebrew's Python3 variables
-    # SET(PYTHON_CONFIG_EXECUTABLE /usr/local/bin/python3-config)
-    # SET(PYTHON_EXECUTABLE /usr/local/bin/python3)
-    # FIND_PACKAGE (Python3 COMPONENTS Interpreter Development)
-    # FIND_PACKAGE(PythonInterp 2.7 REQUIRED)
-    FIND_PACKAGE(Python2 COMPONENTS Interpreter Development)
+    # To avoid picking up the system elements pre-maturely
+    SET(CMAKE_FIND_FRAMEWORK LAST)
+    IF (Python_VERSION_REQUIRED)
+       FIND_PACKAGE(Python ${Python_VERSION_REQUIRED} EXACT REQUIRED COMPONENTS Interpreter)
+    ELSE (Python_VERSION_REQUIRED)
+       FIND_PACKAGE(Python REQUIRED COMPONENTS Interpreter)
+    ENDIF (Python_VERSION_REQUIRED)
+
+    SET(PYTHON_EXECUTABLE ${Python_EXECUTABLE})
 ELSE (APPLE)
     FIND_PACKAGE(PythonInterp)
-ENDIF (APPLE)    
+ENDIF (APPLE)  
 
 EXEC_PROGRAM(
-	${PYTHON_EXECUTABLE}
-	ARGS "-c \"from __future__ import print_function;import sys;print(sys.version[:3])\""
-	OUTPUT_VARIABLE PYTHON_VERSION
+        ${PYTHON_EXECUTABLE}
+        ARGS "-c \"from __future__ import print_function;import sys;print(sys.version[:3])\""
+        OUTPUT_VARIABLE PYTHON_VERSION
 )
 
 IF (SC_GLOBAL_PYTHON_WRAPPER)
-    FIND_PACKAGE(PythonLibs REQUIRED)
-	FIND_PACKAGE(PythonInterp REQUIRED)
+    IF (APPLE)
+       # To avoid picking up the system elements pre-maturely
+       SET(CMAKE_FIND_FRAMEWORK LAST)
+       IF (Python_VERSION_REQUIRED)
+          FIND_PACKAGE(Python ${Python_VERSION_REQUIRED} EXACT REQUIRED COMPONENTS Interpreter Development)
+       ELSE (Python_VERSION_REQUIRED)
+          FIND_PACKAGE(Python REQUIRED COMPONENTS Interpreter Development)
+       ENDIF (Python_VERSION_REQUIRED)
+       
+       SET(PYTHON_LIBRARIES ${Python_LIBRARY})
+       SET(PYTHON_INCLUDE_PATH ${Python_INCLUDE_DIRS})
+       SET(PYTHON_EXECUTABLE ${Python_EXECUTABLE})
+    ELSE (APPLE)
+       FIND_PACKAGE(PythonLibs REQUIRED)
+	   FIND_PACKAGE(PythonInterp REQUIRED)
+	ENDIF (APPLE)
 ENDIF (SC_GLOBAL_PYTHON_WRAPPER)
 
 SET(PYTHON_LIBRARY_SUFFIX /python)
@@ -58,14 +75,14 @@ OPTION(SC_GLOBAL_GUI "Build graphical user interfaces (requires Qt4 or Qt5)" ON)
 OPTION(SC_GLOBAL_GUI_QT5 "Build graphical user interfaces for Qt5" ON)
 
 IF(SC_GLOBAL_GUI)
-	FIND_PACKAGE(Qt5 QUIET COMPONENTS Core Widgets)
-	IF(NOT Qt5_FOUND)
-		SET(SC_GLOBAL_GUI_QT5 OFF)
-	ENDIF()
+        FIND_PACKAGE(Qt5 QUIET COMPONENTS Core Widgets)
+        IF(NOT Qt5_FOUND)
+                SET(SC_GLOBAL_GUI_QT5 OFF)
+        ENDIF()
 
-	IF(NOT SC_GLOBAL_GUI_QT5)
-		FIND_PACKAGE(Qt4 QUIET)
-	ENDIF()
+        IF(NOT SC_GLOBAL_GUI_QT5)
+                FIND_PACKAGE(Qt4 QUIET)
+        ENDIF()
 ENDIF()
 
 INCLUDE(AddFileDependencies)
@@ -104,46 +121,46 @@ SET(SC3_PACKAGE_TEMPLATES_DIR templates)
 # Platform check
 #
 IF (APPLE AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-	SET (MACOSX 1)
-	MESSAGE(STATUS "MACOSX detected")
+        SET (MACOSX 1)
+        MESSAGE(STATUS "MACOSX detected")
 ELSEIF (UNIX AND ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
- 	SET (LINUX 1)
+        SET (LINUX 1)
 ENDIF (APPLE AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 # If gcc is installed add -wall and -pedantic to the commandline
 #
 IF (CMAKE_COMPILER_IS_GNUCC)
-	IF ( ${CMAKE_BUILD_TYPE} MATCHES "Debug" )
-		ADD_DEFINITIONS(-Wall -pedantic -Wno-long-long -Wno-variadic-macros)
-		#ADD_DEFINITIONS(-Wall -Wno-long-long -Wno-variadic-macros)
-	ELSE ( ${CMAKE_BUILD_TYPE} MATCHES "Debug" )
-		ADD_DEFINITIONS(-Wall)
-	ENDIF ( ${CMAKE_BUILD_TYPE} MATCHES "Debug" )
+        IF ( ${CMAKE_BUILD_TYPE} MATCHES "Debug" )
+                ADD_DEFINITIONS(-Wall -pedantic -Wno-long-long -Wno-variadic-macros)
+                #ADD_DEFINITIONS(-Wall -Wno-long-long -Wno-variadic-macros)
+        ELSE ( ${CMAKE_BUILD_TYPE} MATCHES "Debug" )
+                ADD_DEFINITIONS(-Wall)
+        ENDIF ( ${CMAKE_BUILD_TYPE} MATCHES "Debug" )
 
-	# Query gcc version. We can't use CMAKE_CXX_COMPILER_VERSION which is
-	# only supported in cmake >= 2.8.10. SLES 11 still comes with cmake 2.6.
-	EXECUTE_PROCESS(
-		COMMAND ${CMAKE_C_COMPILER} -dumpversion
-		OUTPUT_VARIABLE GCC_VERSION
-	)
+        # Query gcc version. We can't use CMAKE_CXX_COMPILER_VERSION which is
+        # only supported in cmake >= 2.8.10. SLES 11 still comes with cmake 2.6.
+        EXECUTE_PROCESS(
+                COMMAND ${CMAKE_C_COMPILER} -dumpversion
+                OUTPUT_VARIABLE GCC_VERSION
+        )
 
-	STRING(REGEX MATCHALL "[0-9]+" GCC_VERSION_COMPONENTS ${GCC_VERSION})
-	LIST(LENGTH GCC_VERSION_COMPONENTS GCC_VERSION_COMPONENTS_SIZE)
-	LIST(GET GCC_VERSION_COMPONENTS 0 GCC_VERSION_MAJOR)
-	# E.g. Fedora 26 does by default report only the major version number (7)
-	# The new option "-dumpfullversion" is not available on older compilers
-	IF(GCC_VERSION_COMPONENTS_SIZE GREATER 1)
-		LIST(GET GCC_VERSION_COMPONENTS 1 GCC_VERSION_MINOR)
-	ELSE(GCC_VERSION_COMPONENTS_SIZE GREATER 1)
-		SET(GCC_VERSION_MINOR 0)
-	ENDIF(GCC_VERSION_COMPONENTS_SIZE GREATER 1)
+        STRING(REGEX MATCHALL "[0-9]+" GCC_VERSION_COMPONENTS ${GCC_VERSION})
+        LIST(LENGTH GCC_VERSION_COMPONENTS GCC_VERSION_COMPONENTS_SIZE)
+        LIST(GET GCC_VERSION_COMPONENTS 0 GCC_VERSION_MAJOR)
+        # E.g. Fedora 26 does by default report only the major version number (7)
+        # The new option "-dumpfullversion" is not available on older compilers
+        IF(GCC_VERSION_COMPONENTS_SIZE GREATER 1)
+                LIST(GET GCC_VERSION_COMPONENTS 1 GCC_VERSION_MINOR)
+        ELSE(GCC_VERSION_COMPONENTS_SIZE GREATER 1)
+                SET(GCC_VERSION_MINOR 0)
+        ENDIF(GCC_VERSION_COMPONENTS_SIZE GREATER 1)
 
-	MESSAGE(STATUS "Found gcc version ${GCC_VERSION_MAJOR}.${GCC_VERSION_MINOR}")
+        MESSAGE(STATUS "Found gcc version ${GCC_VERSION_MAJOR}.${GCC_VERSION_MINOR}")
 
-	# gcc 6 defaults to C++14 which might break compilation
-	IF(GCC_VERSION_MAJOR GREATER 5)
-		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wno-deprecated-declarations")
-	ENDIF(GCC_VERSION_MAJOR GREATER 5)
+        # gcc 6 defaults to C++14 which might break compilation
+        IF(GCC_VERSION_MAJOR GREATER 5)
+                SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wno-deprecated-declarations")
+        ENDIF(GCC_VERSION_MAJOR GREATER 5)
 ENDIF (CMAKE_COMPILER_IS_GNUCC)
 
 # Set some specific settings for Mac OS X - macOS - Darwin
